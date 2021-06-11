@@ -14,15 +14,21 @@ const io = require('socket.io')(http, {
 });
 
 //var io = require('socket.io').listen(3000);
-io.on('connection', function (socket) {
-    console.log('connected:', socket.client.id);
-    socket.on('serverEvent', function (data) {
+var MessageCounter = 0;
+io.on('connection', function (client) {
+    console.log('connected:', client.client.id);
+    client.on('serverEvent', function (data) {
         console.log('new message from client:', data);
     });
-    setInterval(function () {
-        socket.emit('clientEvent', Math.random());
-        console.log('message sent to the clients');
-    }, 3000);
+		client.on('analle',d=>{
+			io.emit('analle',{data:'new message from '+client.id});
+			console.log(`#${MessageCounter}: weitergeleitet!`);
+
+		});
+    // setInterval(function () {
+    //     client.emit('clientEvent', Math.random());
+    //     console.log('message sent to the clients');
+    // }, 3000);
 });
 console.log('WAS?')
 http.listen(process.env.PORT || PORT, () => { console.log('listening on port ' + PORT); });
